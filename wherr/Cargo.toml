@@ -10,4 +10,4 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/joelonsql/wherr"
 
 [dependencies]
-wherr-macro = { path = "../wherr-macro" }
+wherr-macro = "0.1"
