@@ -1,0 +1,7 @@
+[package]
+name = "wherr"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+wherr-macro = { path = "../wherr-macro" }
