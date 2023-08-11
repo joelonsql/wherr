@@ -12,6 +12,6 @@ fn add(s1: &str, s2: &str) -> Result<i64, Box<dyn std::error::Error>> {
 }
 
 fn main() {
-    let x = add("123", "not a number");
+    let x = add("123", "not a number").unwrap();
     println!("x = {:?}", x);
 }
