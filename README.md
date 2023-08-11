@@ -48,13 +48,20 @@ fn main() {
 
 Running this code would produce:
 
-```sh
+```
 sum1 = 30
 thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: ParseIntError { kind: InvalidDigit }', wherr/examples/macro.rs:12:47
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ```
 
-The error message tells us where the `.unwrap()` call happened, but it doesn't pinpoint where the actual error occurred.
+**wherr/examples/macro.rs:12:47** is this line:
+```rust
+    let sum2 = add_two("123", "not a number").unwrap();
+```
+
+But there is no information on what line of code down the stack that caused this error.
+
+In this specific case, it's easy to analyse and understand, but if there would be lots of nested layers, it can sometimes be difficult to figure out where it comes from.
 
 ### Using the `wherr` procedural macro
 
@@ -82,13 +89,18 @@ fn main() {
 
 The resulting error is:
 
-```sh
+```
 sum1 = 30
 thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: Error at wherr/examples/macro.rs:7. Original error: ParseIntError { kind: InvalidDigit }', wherr/examples/macro.rs:15:47
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ```
 
-Now we see that the error originates from **wherr/examples/macro.rs:7**.
+In addition, we now also got another location, **wherr/examples/macro.rs:7**:
+```rust
+    let i2 = i64::from_str_radix(s2, radix)?;
+```
+
+This is where the error was created and returned.
 
 The `file` and `line` info can also be extracted from the `Wherr` struct,
 that wraps the original `Err`.
@@ -111,9 +123,45 @@ that wraps the original `Err`.
     }
 ```
 
-```sh
+```
 Error at file: 'wherr/examples/macro.rs', line: 7. Original error: invalid digit found in string
 ```
+
+It also works through multiple nested layers:
+
+```rust
+use wherr::wherr;
+
+#[wherr]
+fn add_two(s1: &str, s2: &str) -> Result<i64, Box<dyn std::error::Error>> {
+    let radix = 10;
+    let i1 = i64::from_str_radix(s1, radix)?;
+    let i2 = i64::from_str_radix(s2, radix)?;
+    Ok(i1 + i2)
+}
+
+fn add_four(s1: &str, s2: &str, s3: &str, s4: &str) -> Result<i64, Box<dyn std::error::Error>> {
+    let i1 = add_two(s1, s2)?;
+    let i2 = add_two(s3, s4)?;
+    Ok(i1 + i2)
+}
+
+fn main() {
+    let sum = add_four("10", "20", "30", "foo").unwrap();
+    println!("sum = {}", sum);
+}
+```
+
+```
+thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: Error at wherr/examples/nested.rs:7. Original error: ParseIntError { kind: InvalidDigit }', wherr/examples/nested.rs:18:49
+```
+
+Here, **wherr/examples/nested.rs:7** is this line:
+```rust
+    let i2 = i64::from_str_radix(s2, radix)?;
+```
+
+That is, the line in `add_two()` where the error happened, propagated to `add_four()`, and then to `main()`.
 
 ## API Reference
 
