@@ -1,11 +1,16 @@
 # `wherr` Crate Documentation
 
-`wherr` extends Rust's `?` operator to append file and line number details to errors, aiding in debugging.
+`wherr` extends Rust's `?` operator to append file and line number details to
+errors, aiding in debugging.
 
-`wherr` is composed of two separate crates, due to Rust's limitation that prohibits mixing normal functions with procedural macros in a single crate:
+`wherr` is composed of two separate crates, due to Rust's limitation that
+prohibits mixing normal functions with procedural macros in a single crate:
 
-1. [`wherr`](https://crates.io/crates/wherr): This is the main library that offers the enhanced functionality for error handling in Rust.
-2. [`wherr-macro`](https://crates.io/crates/wherr-macro): Contains the procedural macros specifically designed for the `wherr` crate.
+1. [`wherr`](https://crates.io/crates/wherr):
+   This is the main library that offers the enhanced functionality for error
+   handling in Rust.
+2. [`wherr-macro`](https://crates.io/crates/wherr-macro):
+   Contains the procedural macros specifically designed for the `wherr` crate.
 
 ## Table of Contents
 
@@ -47,11 +52,13 @@ fn some_function() -> Result<(), Box<dyn std::error::Error>> {
 ## How it works
 
 The #[wherr] notation is a [proc_macro_attribute](https://doc.rust-lang.org/reference/procedural-macros.html#attribute-macros),
-a powerful tool in Rust that allows for custom transformations of the code at compile time.
+a powerful tool in Rust that allows for custom transformations of the code at
+compile time.
 
-The purpose of this attribute is to enhance the error handling in Rust.
-When you use `?` to propagate errors, by default, you only get the error message.
-With `#[wherr]`, the idea is to provide richer context: the exact file and line number where the error occurred.
+When an error is propagated with the `?` operator in a function decorated with
+`#[wherr]`, it captures the file and line number where the error occurred.
+This provides developers with a more informative error, aiding in precise
+debugging.
 
 For instance, consider this function:
 
@@ -76,12 +83,19 @@ fn add(s1: &str, s2: &str) -> Result<i64, Box<dyn std::error::Error>> {
 }
 ```
 
-Now, you may be wondering: How does this `wherrapper` function make all this happen?
+Now, you may be wondering: How does this `wherrapper` function make all
+this happen?
 
-The `wherrapper` function, defined below, takes in the original `Result`,
-the file, and the line number. If the `Result` is an `Ok`, it passes through
-unchanged. If it's an `Err`, it wraps the error into a new `Wherr` type which
-contains the original error alongside the file and line number:
+The `wherrapper` function receives the original `Result`, the file, and the line
+number. If the `Result` is an `Ok`, it's simply returned unchanged.
+For an `Err`, however, things are a bit more intricate.
+If the error hasn't already been wrapped in a Wherr type (meaning it doesn't yet
+have the file and line details), the function wraps it in a new `Wherr` type
+that contains the original error, as well as the file and line information.
+If the error is already a `Wherr` type, it's left unchanged, ensuring that we
+retain the original location of the error.
+
+Here's a brief look at the `wherrapper` function:
 
 ```rust
 pub fn wherrapper<T, E>(
@@ -107,8 +121,8 @@ where
 ```
 
 Through this mechanism, any error returned (propagated using `?`) from
-a function annotated with `#[wherr]` will provide not just the error message
-but also the precise location of where the error occurred in the code.
+a function annotated with `#[wherr]` will the precise location of where the
+error occurred in the code.
 This offers developers better insight during debugging sessions.
 
 ## Usage
@@ -353,7 +367,8 @@ Methods:
 
 ### `wherrapper`
 
-This internal utility function is used by the procedural macro to wrap errors with file and line information.
+This internal utility function is used by the procedural macro to wrap errors
+with file and line information.
 
 ```rust
 pub fn wherrapper<T, E>(
@@ -365,7 +380,8 @@ pub fn wherrapper<T, E>(
 
 ### `wherr` procedural macro
 
-A procedural macro that auto-wraps errors (using the `?` operator) inside a function with file and line number details.
+A procedural macro that auto-wraps errors (using the `?` operator) inside
+a function with file and line number details.
 
 ```rust
 #[wherr]
@@ -374,8 +390,10 @@ fn some_function() -> Result<(), Box<dyn std::error::Error>> { /* ... */ }
 
 ## Contributing
 
-If you're interested in contributing to `wherr`, please follow standard Rust community guidelines and submit a PR on our repository.
+If you're interested in contributing to `wherr`, please follow standard
+Rust community guidelines and submit a PR on our repository.
 
 ## License
 
-Please refer to the `LICENSE` file in the root directory of the crate for license details.
+Please refer to the `LICENSE` file in the root directory of the crate for
+license details.
