@@ -2,6 +2,12 @@
 name = "wherr-macro"
 version = "0.1.0"
 edition = "2021"
+authors = ["Joel Jakobsson <joel@compiler.org>"]
+categories = ["rust-patterns"]
+description = "Enhance Rust error messages with file and line details using the `#[wherr]` macro for clearer debugging."
+keywords = ["error", "error-handling"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/joelonsql/wherr"
 
 [lib]
 proc-macro = true
