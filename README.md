@@ -66,7 +66,11 @@ Essentially, the function:
 
 ```rust
 #[wherr]
-fn add(s1: &str, s2: &str) -> Result<i64, Box<dyn std::error::Error>> { ... }
+fn add(s1: &str, s2: &str) -> Result<i64, Box<dyn std::error::Error>> {
+    ...
+    let i1 = i64::from_str_radix(s1, radix)?;
+    ...
+}
 ```
 
 ... is transformed to:
