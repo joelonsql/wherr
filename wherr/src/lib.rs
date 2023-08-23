@@ -39,8 +39,8 @@ impl fmt::Display for Wherr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "Error at {}:{}. Original error: {}",
-            self.file, self.line, self.inner
+            "{}\nerror at {}:{}",
+            self.inner, self.file, self.line
         )
     }
 }
@@ -49,8 +49,8 @@ impl fmt::Debug for Wherr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "Error at {}:{}. Original error: {:?}",
-            self.file, self.line, self.inner
+            "{:?}\nerror at {}:{}",
+            self.inner, self.file, self.line
         )
     }
 }

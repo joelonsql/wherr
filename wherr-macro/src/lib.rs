@@ -1,6 +1,6 @@
 //! `wherr-macro` crate provides a procedural macro to enhance Rust errors with file and line number information.
 //!
-//! When using the provided `wherr` macro attribute on a function, any error returned by the `?` operator within that function 
+//! When using the provided `wherr` macro attribute on a function, any error returned by the `?` operator within that function
 //! is automatically wrapped to include the file and line number where the error occurred.
 
 use proc_macro::TokenStream;
@@ -8,7 +8,7 @@ use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
 use syn::{parse_macro_input, visit_mut::VisitMut, Expr};
 
-/// Procedural macro attribute that processes a function to automatically wrap errors using the `?` operator 
+/// Procedural macro attribute that processes a function to automatically wrap errors using the `?` operator
 /// with file and line number details.
 #[proc_macro_attribute]
 pub fn wherr(_attrs: TokenStream, input: TokenStream) -> TokenStream {
@@ -22,7 +22,7 @@ pub fn wherr(_attrs: TokenStream, input: TokenStream) -> TokenStream {
 
 /// Visitor used by the `wherr` procedural macro to traverse and mutate the Abstract Syntax Tree (AST) of the function.
 ///
-/// This visitor specifically looks for expressions using the `?` operator and wraps them with additional 
+/// This visitor specifically looks for expressions using the `?` operator and wraps them with additional
 /// file and line information.
 struct WherrVisitor;
 

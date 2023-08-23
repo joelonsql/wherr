@@ -21,7 +21,7 @@ fn test_wherr_display() {
 
     assert_eq!(
         format!("{}", wherr),
-        format!("Error at test.rs:42. Original error: {}", error_message)
+        format!("{}\nerror at test.rs:42", error_message)
     );
 }
 
