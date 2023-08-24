@@ -33,8 +33,7 @@ fn test_wherrapper() {
 
     match wherrapper(result, "test.rs", 42) {
         Ok(_) => panic!("Expected an error"),
-        Err(err) => {
-            let wherr = err.downcast::<Wherr>().expect("Expected a Wherr error");
+        Err(wherr) => {
             assert_eq!(wherr.file, "test.rs");
             assert_eq!(wherr.line, 42);
             assert_eq!(wherr.inner.to_string(), error_message);

@@ -13,20 +13,20 @@ pub use wherr_macro::wherr;
 ///
 /// This error struct wraps around any error and provides a consistent interface to access the original error
 /// and the file and line where it originated from.
-pub struct Wherr {
-    pub inner: Box<dyn std::error::Error>,
+pub struct Wherr<E> {
+    pub inner: E,
     pub file: &'static str,
     pub line: u32,
 }
 
-impl Wherr {
+impl<E> Wherr<E> {
     /// Create a new `Wherr` error from the given error, file, and line.
     ///
     /// # Parameters
     /// * `err`: The original error to wrap.
     /// * `file`: The file where the error occurred.
     /// * `line`: The line number where the error occurred.
-    pub fn new(err: Box<dyn std::error::Error>, file: &'static str, line: u32) -> Self {
+    pub fn new(err: E, file: &'static str, line: u32) -> Self {
         Wherr {
             inner: err,
             file,
@@ -35,7 +35,7 @@ impl Wherr {
     }
 }
 
-impl fmt::Display for Wherr {
+impl<E: fmt::Display> fmt::Display for Wherr<E> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -45,7 +45,7 @@ impl fmt::Display for Wherr {
     }
 }
 
-impl fmt::Debug for Wherr {
+impl<E: fmt::Debug> fmt::Debug for Wherr<E> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -55,8 +55,7 @@ impl fmt::Debug for Wherr {
     }
 }
 
-impl std::error::Error for Wherr {}
-
+impl<E: std::error::Error> std::error::Error for Wherr<E> {}
 /// Utility function to wrap the given error into a `Wherr` struct, adding file and line number details.
 ///
 /// # Parameters
@@ -71,19 +70,10 @@ pub fn wherrapper<T, E>(
     result: Result<T, E>,
     file: &'static str,
     line: u32,
-) -> Result<T, Box<dyn std::error::Error>>
-where
-    E: Into<Box<dyn std::error::Error>>,
+) -> Result<T, Wherr<E>>
 {
     match result {
         Ok(val) => Ok(val),
-        Err(err) => {
-            let boxed_err: Box<dyn std::error::Error> = err.into();
-            if boxed_err.is::<Wherr>() {
-                Err(boxed_err)
-            } else {
-                Err(Box::new(Wherr::new(boxed_err, file, line)))
-            }
-        }
+        Err(err) => Err(Wherr::new(err, file, line))
     }
 }

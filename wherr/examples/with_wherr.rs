@@ -9,7 +9,13 @@ fn concat_files(path1: &str, path2: &str) -> Result<String, Box<dyn std::error::
     Ok(content1)
 }
 
+#[wherr]
+fn some_function(path1: &str, path2: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let foo = concat_files(path1, path2)?;
+    Ok(foo)
+}
+
 fn main() {
-    let content = concat_files("file1.txt", "file2.txt").expect("Failed to concatenate the files");
+    let content = some_function("file1.txt", "file2.txt").expect("Failed to concatenate the files");
     println!("Concatenated content:\n{}", content);
 }
