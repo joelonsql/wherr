@@ -11,3 +11,7 @@ repository = "https://github.com/joelonsql/wherr"
 
 [dependencies]
 wherr-macro = "0.1"
+anyhow = { version = "1", optional = true }
+
+[features]
+anyhow = ["dep:anyhow"]
