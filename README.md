@@ -3,6 +3,7 @@
 [![version](https://img.shields.io/crates/v/wherr.svg)](https://crates.io/crates/wherr)
 [![documentation](https://docs.rs/wherr/badge.svg)](https://docs.rs/wherr)
 [![License](https://img.shields.io/crates/l/wherr)](./LICENSE)
+[Discuss `wherr` on Hacker News](https://news.ycombinator.com/item?id=37232229)
 
 Enhance Rust's `?` operator by appending file and line number details to errors, simplifying the debugging process.
 
