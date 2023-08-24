@@ -1,7 +1,6 @@
-use wherr::wherr;
+use wherr::MyError;
 
-#[wherr]
-fn concat_files(path1: &str, path2: &str) -> Result<String, Box<dyn std::error::Error>> {
+fn concat_files(path1: &str, path2: &str) -> Result<String, Box<dyn MyError>> {
     let mut content1 = std::fs::read_to_string(path1)?;
     let content2 = std::fs::read_to_string(path2)?;
 
