@@ -16,6 +16,8 @@ impl std::fmt::Display for FooError {
 impl std::error::Error for FooError {}
 
 fn my_error() -> Result<(), FooError> {
+    _ = FooError::B;
+    _ = FooError::C;
     Err(FooError::A)?
 }
 
@@ -29,8 +31,10 @@ fn main() {
         _ => { println!("got some other MyError variant"); }
     }
 
-    match my_error_wrapped().unwrap_err() {
-        _ => todo!(),
+    match my_error_wrapped().unwrap_err().inner_error().downcast_ref::<FooError>() {
+        Some(FooError::A) => { println!("got MyError::A"); }
+        Some(_) => { println!("got some other MyError variant"); }
+        None => { println!("got an unexpected error type"); }
     }
 
 }

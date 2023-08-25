@@ -4,7 +4,7 @@ use std::fmt;
 
 pub trait MyError: StdError {
     fn location(&self) -> &'static Location<'static>;
-    fn inner_error<'a>(&'a self) -> &'a (dyn StdError + 'a);
+    fn inner_error(&self) -> &(dyn StdError + 'static);
 }
 
 #[derive(Debug)]
@@ -13,7 +13,7 @@ pub struct MyErrorInner<E> {
     location: &'static Location<'static>,
 }
 
-impl<'a, E: StdError + Send + Sync + 'a> From<E> for Box<dyn MyError + Send + Sync + 'a> {
+impl<E: StdError + Send + Sync + 'static> From<E> for Box<dyn MyError + Send + Sync> {
     #[track_caller]
     #[inline]
     fn from(error: E) -> Self {
@@ -24,7 +24,7 @@ impl<'a, E: StdError + Send + Sync + 'a> From<E> for Box<dyn MyError + Send + Sy
     }
 }
 
-impl<'a, E: StdError + 'a> From<E> for Box<dyn MyError + 'a> {
+impl<E: StdError + Send + 'static> From<E> for Box<dyn MyError + Send> {
     #[track_caller]
     #[inline]
     fn from(error: E) -> Self {
@@ -35,7 +35,7 @@ impl<'a, E: StdError + 'a> From<E> for Box<dyn MyError + 'a> {
     }
 }
 
-impl<'a, E: StdError + Send + 'a> From<E> for Box<dyn MyError + Send + 'a> {
+impl<E: StdError + 'static> From<E> for Box<dyn MyError> {
     #[track_caller]
     #[inline]
     fn from(error: E) -> Self {
@@ -54,11 +54,11 @@ impl<E: fmt::Display> fmt::Display for MyErrorInner<E> {
 
 impl<E: StdError> StdError for MyErrorInner<E> {}
 
-impl<E: StdError> MyError for MyErrorInner<E> {
+impl<E: StdError + 'static> MyError for MyErrorInner<E> {
     fn location(&self) -> &'static Location<'static> {
         self.location
     }
-    fn inner_error(&self) -> &dyn StdError {
+    fn inner_error(&self) -> &(dyn StdError + 'static) {
         &self.error
     }
 }
