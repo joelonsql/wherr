@@ -9,12 +9,20 @@ use std::fmt;
 // Re-export the procedural macro from the `wherr_macro` crate.
 pub use wherr_macro::wherr;
 
+#[cfg(feature = "anyhow")]
+use anyhow::Error as AnyhowError;
+
+#[cfg(feature = "anyhow")]
+type Wherror = AnyhowError;
+#[cfg(not(feature = "anyhow"))]
+type Wherror = Box<dyn std::error::Error>;
+
 /// Represents an error that includes file and line number metadata.
 ///
 /// This error struct wraps around any error and provides a consistent interface to access the original error
 /// and the file and line where it originated from.
 pub struct Wherr {
-    pub inner: Box<dyn std::error::Error>,
+    pub inner: Wherror,
     pub file: &'static str,
     pub line: u32,
 }
@@ -26,7 +34,7 @@ impl Wherr {
     /// * `err`: The original error to wrap.
     /// * `file`: The file where the error occurred.
     /// * `line`: The line number where the error occurred.
-    pub fn new(err: Box<dyn std::error::Error>, file: &'static str, line: u32) -> Self {
+    pub fn new(err: Wherror, file: &'static str, line: u32) -> Self {
         Wherr {
             inner: err,
             file,
@@ -71,18 +79,18 @@ pub fn wherrapper<T, E>(
     result: Result<T, E>,
     file: &'static str,
     line: u32,
-) -> Result<T, Box<dyn std::error::Error>>
+) -> Result<T, Wherror>
 where
-    E: Into<Box<dyn std::error::Error>>,
+    E: Into<Wherror>,
 {
     match result {
         Ok(val) => Ok(val),
         Err(err) => {
-            let boxed_err: Box<dyn std::error::Error> = err.into();
-            if boxed_err.is::<Wherr>() {
-                Err(boxed_err)
+            let error: Wherror = err.into();
+            if error.is::<Wherr>() {
+                Err(error)
             } else {
-                Err(Box::new(Wherr::new(boxed_err, file, line)))
+                Err(Wherr::new(error, file, line).into())
             }
         }
     }

@@ -9,5 +9,9 @@ keywords = ["error", "error-handling"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/joelonsql/wherr"
 
+[features]
+anyhow = ["dep:anyhow"]
+
 [dependencies]
 wherr-macro = "0.1"
+anyhow = { version = "1.0", optional = true }
