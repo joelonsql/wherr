@@ -10,9 +10,10 @@ Enhance Rust's `?` operator by appending file and line number details to errors,
 
 ## Features
 
-- Appends file and line number to errors propagated with `?`.
-- Integrates seamlessly with Rust's existing error handling.
-- Helps locate and fix errors faster by pinpointing their origin.
+- 📁 Appends file and line number to errors propagated with `?`.
+- 🧩 Integrates seamlessly with Rust's existing error handling.
+- 📍 Helps locate and fix errors faster by pinpointing their origin.
+- 🚀 Supports `anyhow` error handling through the `anyhow` feature flag.
 
 ## Why `wherr`?
 
@@ -29,9 +30,18 @@ Add the following to your `Cargo.toml`:
 wherr = "0.1"
 ```
 
+For `anyhow` support:
+
+```toml
+[dependencies]
+wherr = { version = "0.1", features = ["anyhow"] }
+```
+
 ## Quick Start
 
 By simply annotating your functions with `#[wherr]`, errors propagated using `?` will also include the file and line number.
+
+1. **Standard Usage**: Annotate functions with `#[wherr]`.
 
 ```rust
 use wherr::wherr;
@@ -56,6 +66,36 @@ This will highlight the difference `wherr` makes. Your error will now indicate e
 
 ```
 error at wherr/examples/with_wherr.rs:5
+```
+
+2. **With `anyhow`**:
+
+Ensure you've added the `anyhow` feature as shown in the installation section. Then:
+
+```rust
+use anyhow::{Context, Result};
+use wherr::wherr;
+
+#[wherr]
+fn concat_files(path1: &str, path2: &str) -> Result<String> {
+    let mut content1 = std::fs::read_to_string(path1).with_context(|| format!("Failed to read {}", path1))?;
+    let content2 = std::fs::read_to_string(path2).with_context(|| format!("Failed to read {}", path2))?;
+
+    content1.push_str(&content2);
+    Ok(content1)
+}
+```
+
+Run the provided example:
+
+```sh
+cargo run --features=anyhow --example anyhow
+```
+
+This will highlight the difference `wherr` makes. Your error will now indicate exactly where the issue arises:
+
+```
+error at wherr/examples/anyhow.rs:6
 ```
 
 ## Behind the Scenes

@@ -1,6 +1,6 @@
 [package]
 name = "wherr"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 authors = ["Joel Jakobsson <github@compiler.org>"]
 categories = ["rust-patterns"]
@@ -9,5 +9,18 @@ keywords = ["error", "error-handling"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/joelonsql/wherr"
 
+[features]
+anyhow = ["dep:anyhow"]
+
 [dependencies]
 wherr-macro = "0.1"
+anyhow = { version = "1.0", optional = true }
+
+[[example]]
+name = "anyhow"
+required-features = ["anyhow"]
+
+[[test]]
+name = "anyhow_error_tests"
+path = "tests/anyhow_error_tests.rs"
+required-features = ["anyhow"]

@@ -8,5 +8,5 @@ fn concat_files(path1: &str, path2: &str) -> Result<String, std::io::Error> {
 
 fn main() {
     let content = concat_files("file1.txt", "file2.txt").expect("Failed to concatenate the files");
-    println!("Concatenated content:\n{}", content);
+    println!("Concatenated content:\n{content}");
 }
