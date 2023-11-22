@@ -1,7 +1,13 @@
+#[cfg(not(feature = "backtrace"))]
+type MyError = Box<dyn std::error::Error>;
+
+#[cfg(feature = "backtrace")]
+type MyError = wherr::GenericWherrError;
+
 use wherr::wherr;
 
 #[wherr]
-fn concat_files(path1: &str, path2: &str) -> Result<String, Box<dyn std::error::Error>> {
+fn concat_files(path1: &str, path2: &str) -> Result<String, MyError> {
     let mut content1 = std::fs::read_to_string(path1)?;
     let content2 = std::fs::read_to_string(path2)?;
 

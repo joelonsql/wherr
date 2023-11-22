@@ -4,6 +4,12 @@
 //!
 //! The `wherr` attribute macro, defined in the `wherr_macro` crate, is re-exported here for ease of use.
 
+#[cfg(feature = "backtrace")]
+mod backtrace;
+
+#[cfg(feature = "backtrace")]
+pub use self::backtrace::*;
+
 use std::fmt;
 
 // Re-export the procedural macro from the `wherr_macro` crate.
@@ -75,6 +81,7 @@ impl std::error::Error for Wherr {}
 /// # Returns
 /// If the original error is already of type `Wherr`, it is returned as is.
 /// Otherwise, the original error is wrapped inside a `Wherr` and returned.
+#[cfg(not(feature = "backtrace"))]
 pub fn wherrapper<T, E>(
     result: Result<T, E>,
     file: &'static str,

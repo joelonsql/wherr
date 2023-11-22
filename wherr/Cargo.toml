@@ -11,6 +11,7 @@ repository = "https://github.com/joelonsql/wherr"
 
 [features]
 anyhow = ["dep:anyhow"]
+backtrace = []
 
 [dependencies]
 wherr-macro = "0.1"
@@ -24,3 +25,8 @@ required-features = ["anyhow"]
 name = "anyhow_error_tests"
 path = "tests/anyhow_error_tests.rs"
 required-features = ["anyhow"]
+
+[[test]]
+name = "backtrace_tests"
+path = "tests/backtrace_tests.rs"
+required-features = ["backtrace"]
