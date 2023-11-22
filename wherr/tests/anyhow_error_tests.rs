@@ -68,7 +68,7 @@ fn test_wherr_macro() {
         Ok(_) => panic!("Expected an error"),
         Err(err) => {
             let wherr = err.downcast::<Wherr>().expect("Expected a Wherr error");
-            assert_eq!(wherr.file, "wherr/tests/anyhow_error_tests.rs");
+            assert_eq!(wherr.file.replace('\\', "/"), "wherr/tests/anyhow_error_tests.rs");
             assert_eq!(wherr.line, 46);
             assert_eq!(wherr.inner.to_string(), "invalid digit found in string");
         }
